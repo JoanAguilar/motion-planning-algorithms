@@ -3,15 +3,9 @@
 import bisect
 from typing import Callable, Generic, Hashable, Iterator, Optional, TypeVar
 
+from motionplanning.graphs import NodeError, PathError
+
 T = TypeVar('T', bound=Hashable)
-
-
-class NodeError(Exception):
-    """Raised when a node is not on the graph."""
-
-
-class PathError(Exception):
-    """Raised when a path between nodes cannot be found."""
 
 
 class Graph(Generic[T]):
@@ -44,6 +38,8 @@ class Graph(Generic[T]):
         Add edge to the graph.
 
         If any of the nodes are not in the graph, they will be added.
+        If the edge was already in the graph, its associated cost will
+        be updated.
 
         Args:
             start_node: Origin node of the edge.
