@@ -41,7 +41,7 @@ def rrt(
             another node. ``steer(v0, v1)`` generates a new node,
             ``v2``, which is on the path from ``v0`` towards ``v1``.
             In general, it is expected that ``v2`` will be closer (or
-            as close) to ``v0`` than ``v1``.
+            as close) to ``v0`` in terms of cost than ``v1``.
         check_path: Function to check if the path between two nodes
             is feasible (obstacle-free). "True" means the path is
             feasible.

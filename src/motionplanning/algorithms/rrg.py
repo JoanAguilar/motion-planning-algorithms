@@ -1,4 +1,4 @@
-"""Implementation for the RRG algorithm."""
+"""Implementations for the RRG and k-RRG algorithms."""
 
 import bisect
 from typing import Callable, Iterable, Optional, TypeVar
@@ -40,7 +40,7 @@ def rrg(
             another node. ``steer(v0, v1)`` generates a new node,
             ``v2``, which is on the path from ``v0`` towards ``v1``.
             In general, it is expected that ``v2`` will be closer (or
-            as close) to ``v0`` than ``v1``.
+            as close) to ``v0`` in terms of cost than ``v1``.
         check_path: Function to check if the path between two nodes
             is feasible (obstacle-free). "True" means the path is
             feasible.
@@ -112,6 +112,103 @@ def rrg(
                 gamma_rrg * (np.log(n_nodes) / n_nodes) ** (1 / d),
                 steer_cost)
             near_v = near(new_v, nodes, r)
+            graph.add_node(new_v)
+            graph.add_edge(
+                nearest_v,
+                new_v,
+                cost(nearest_v, new_v),
+                twoway=True)
+            for u in near_v:
+                if check_path(u, new_v):
+                    graph.add_edge(u, new_v, cost(u, new_v), twoway=True)
+    return graph
+
+
+def krrg(
+        sample_free: Callable[[], T],
+        cost: Callable[[T, T], float],
+        steer: Callable[[T, T], T],
+        check_path: Callable[[T, T], bool],
+        iters: int,
+        init_nodes: Optional[Iterable[T]] = None,
+        k_rrg: float = 2 * np.e
+        ) -> Graph[T]:
+    """
+    Run the k-RRG (k-nearest RRG) algorithm.
+
+    The k-RRG algorithm generates a graph (roadmap) spanning the free
+    space that can be used for multiple queries. k-RRG follows a
+    similar procedure to RRG, with the major difference that RRG
+    considers node connections based on cost threshold, while k-RRG
+    considers connections with the ``k`` nearest nodes. The
+    implementation follows the one outlined in [1], see there for more
+    information.
+
+    Args:
+        sample_free: Function to sample a node from the free space.
+        cost: Function to compute the cost between two nodes.
+        steer: Function to generate a node from one node towards
+            another node. ``steer(v0, v1)`` generates a new node,
+            ``v2``, which is on the path from ``v0`` towards ``v1``.
+            In general, it is expected that ``v2`` will be closer (or
+            as close) to ``v0`` in terms of cost than ``v1``.
+        check_path: Function to check if the path between two nodes
+            is feasible (obstacle-free). "True" means the path is
+            feasible.
+        iters: Number of iterations to run the algorithm. The returned
+            roadmap will contain ``iters + len(init_nodes)`` nodes.
+        init_nodes: Nodes added to the roadmap during initialization.
+            These nodes will always be present in the returned roadmap.
+        k_rrg: The parameter used to compute how many nodes are
+            considered for connection. The number of nodes considered
+            is computed as ``round(k_rrg * np.log(len(V)))``, where
+            ``len(V)`` is the number of nodes in the computed graph at
+            the current iteration. [1] recommends using a value of
+            ``k_rrg`` such that ``k_rrg > e * (1 + 1 / d)``, where
+            ``d`` is the dimensionality of the (free) space, and notes
+            that ``k_rrg = 2 * e`` _is a valid choice for all problem_
+            _instances_.
+
+    Returns:
+        A Graph containing the generated roadmap.
+
+    [1] KARAMAN, Sertac; FRAZZOLI, Emilio. Sampling-based algorithms
+    for optimal motion planning. _The international journal of_
+    _robotics research,_ 2011, 30.7: 846-894.
+    """
+    if init_nodes is None:
+        init_nodes = []
+
+    def k_nearest(n1: T, nodes: Iterable[T], k: int) -> list[T]:
+        # Return the ``k`` nearest nodes to ``n1`` from ``nodes`` in
+        # terms of cost.
+        nodes_cost_sorted: list[tuple[T, float]] = []
+        for n2 in nodes:
+            c12 = cost(n1, n2)
+            bisect.insort(nodes_cost_sorted, (n2, c12), key=lambda x: x[1])
+        nodes_sorted = []
+        for i in range(min(k, len(nodes_cost_sorted))):
+            nodes_sorted.append(nodes_cost_sorted[i][0])
+        return nodes_sorted
+
+    def nearest(n1: T, nodes: Iterable[T]) -> T:
+        # Return the node nearest to ``n1`` in ``nodes`` in terms of
+        # cost.
+        return k_nearest(n1, nodes, 1)[0]
+
+    graph = Graph[T]()
+    for node in init_nodes:
+        graph.add_node(node)
+
+    for _ in range(iters):
+        nodes = graph.nodes
+        v = sample_free()
+        nearest_v = nearest(v, nodes)
+        new_v = steer(nearest_v, v)
+        if check_path(nearest_v, new_v):
+            n_nodes = len(nodes)
+            k = round(k_rrg * np.log(n_nodes))
+            near_v = k_nearest(new_v, nodes, k)
             graph.add_node(new_v)
             graph.add_edge(
                 nearest_v,
