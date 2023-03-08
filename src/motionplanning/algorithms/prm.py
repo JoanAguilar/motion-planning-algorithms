@@ -3,7 +3,7 @@
 import bisect
 from typing import Callable, Hashable, Iterable, Optional, TypeVar
 
-from motionplanning.graph import Graph
+from motionplanning.graphs import Graph
 
 T = TypeVar('T', bound=Hashable)
 
