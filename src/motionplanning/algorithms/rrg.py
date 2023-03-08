@@ -19,7 +19,7 @@ def rrg(
         d: int,
         steer_cost: float,
         iters: int,
-        init_nodes: Optional[list[T]] = None
+        init_nodes: Optional[Iterable[T]] = None
         ) -> Graph[T]:
     """
     Run the RRG (Rapidly-exploring Random Graph) algorithm.

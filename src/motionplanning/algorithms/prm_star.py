@@ -1,6 +1,6 @@
 """Implementation for the PRM* and k-PRM* algorithms."""
 
-from typing import Callable, Optional, TypeVar
+from typing import Callable, Iterable, Optional, TypeVar
 
 import numpy as np
 
@@ -17,7 +17,7 @@ def prm_star(
         gamma_prm: float,
         d: int,
         iters: int,
-        init_nodes: Optional[list[T]] = None
+        init_nodes: Optional[Iterable[T]] = None
         ) -> Graph[T]:
     """
     Run the PRM* (PRM-star) algorithm.
@@ -75,7 +75,7 @@ def kprm_star(
         cost: Callable[[T, T], float],
         check_path: Callable[[T, T], bool],
         iters: int,
-        init_nodes: Optional[list[T]] = None,
+        init_nodes: Optional[Iterable[T]] = None,
         k_prm: float = 2 * np.e
         ) -> Graph[T]:
     """

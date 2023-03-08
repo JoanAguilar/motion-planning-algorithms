@@ -14,7 +14,7 @@ def prm(
         check_path: Callable[[T, T], bool],
         near_cost: float,
         iters: int,
-        init_nodes: Optional[list[T]] = None
+        init_nodes: Optional[Iterable[T]] = None
         ) -> Graph[T]:
     """
     Run the PRM (Probabilistic RoadMaps) algorithm.
@@ -79,7 +79,7 @@ def sprm(
         check_path: Callable[[T, T], bool],
         near_cost: float,
         iters: int,
-        init_nodes: Optional[list[T]] = None
+        init_nodes: Optional[Iterable[T]] = None
         ) -> Graph[T]:
     """
     Run the sPRM ("simplified" PRM) algorithm.
@@ -146,7 +146,7 @@ def ksprm(
         cost: Callable[[T, T], float],
         check_path: Callable[[T, T], bool],
         iters: int,
-        init_nodes: Optional[list[T]] = None,
+        init_nodes: Optional[Iterable[T]] = None,
         k: int = 15
         ) -> Graph[T]:
     """
