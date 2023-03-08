@@ -15,7 +15,14 @@ class PathError(Exception):
 
 
 class Graph(Generic[T]):
-    """A directed graph."""
+    """
+    A directed graph with nodes of type ``T``.
+
+    Graph edges have an associated cost (which is specified when adding
+    an edge).
+
+    The type ``T`` must be hashable.
+    """
 
     def __init__(self) -> None:
         """Initialize the graph with no nodes or edges."""
