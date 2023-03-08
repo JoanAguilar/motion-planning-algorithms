@@ -167,10 +167,10 @@ def ksprm(
             feasible
         iters: Number of iterations to run the algorithm. The resulting
             graph will contain ``iters + len(init_nodes)`` nodes.
-        k: The number of nearest nodes to consider for connection. [2]
-            reports 15 as a typical value.
         init_nodes: Nodes added to the roadmap during initialization.
             These nodes will always be present in the returned roadmap.
+        k: The number of nearest nodes to consider for connection. [2]
+            reports 15 as a typical value.
 
     Returns:
         A Graph containing the generated roadmap.
