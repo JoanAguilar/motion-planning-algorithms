@@ -139,7 +139,7 @@ def krrg(
     The k-RRG algorithm generates a graph (roadmap) spanning the free
     space that can be used for multiple queries. k-RRG follows a
     similar procedure to RRG, with the major difference that RRG
-    considers node connections based on cost threshold, while k-RRG
+    considers node connections based on a cost threshold, while k-RRG
     considers connections with the ``k`` nearest nodes. The
     implementation follows the one outlined in [1], see there for more
     information.
