@@ -21,7 +21,8 @@ def rrt_star(
         gamma_rrt: float,
         d: int,
         steer_cost: float,
-        max_iters: int
+        max_iters: int,
+        return_fast: bool = False
         ) -> tuple[Tree[T], T]:
     """
     Run the RRT* (RRT-star) algorithm.
@@ -62,6 +63,10 @@ def rrt_star(
             ``steer_cost >= dist(v0, steer(v0, v1))`` for any value of
             ``v0`` and ``v1`` in the free space.
         max_iters: Maximum number of iterations to run the algorithm.
+        return_fast: If set to True, the algorithm returns once a node
+            in the goal region has been found; if set to False, the
+            algorithm runs until the maximum number of iterations is
+            reached.
 
     Returns:
         The generated tree, and the node in the goal region.
@@ -104,7 +109,11 @@ def rrt_star(
 
     tree = Tree[T](init_node)
     if goal(init_node):
-        return tree, init_node
+        goal_node = init_node
+    else:
+        goal_node = None
+    if return_fast and goal_node is not None:
+        return tree, goal_node
 
     for _ in range(max_iters):
         nodes = tree.nodes
@@ -135,7 +144,12 @@ def rrt_star(
                     tree.add_node(u, new_v, cost(new_v, u))
 
             if goal(new_v):
-                return tree, new_v
+                goal_node = new_v
+            if return_fast and goal_node is not None:
+                return tree, goal_node
+
+    if goal_node is not None:
+        return tree, goal_node
 
     raise MaxIterError(
         f"Could not find a node in the goal region after {max_iters} "
