@@ -1,13 +1,13 @@
 """Implementation for the PRM* and k-PRM* algorithms."""
 
-from typing import Callable, Hashable, Optional, TypeVar
+from typing import Callable, Optional, TypeVar
 
 import numpy as np
 
 from motionplanning.algorithms import ksprm, sprm
 from motionplanning.graphs import Graph
 
-T = TypeVar('T', bound=Hashable)
+T = TypeVar('T')
 
 
 def prm_star(

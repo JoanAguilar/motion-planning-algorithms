@@ -1,11 +1,11 @@
 """Implementations for the PRM, sPRM, and k-sPRM algorithms."""
 
 import bisect
-from typing import Callable, Hashable, Iterable, Optional, TypeVar
+from typing import Callable, Iterable, Optional, TypeVar
 
 from motionplanning.graphs import Graph
 
-T = TypeVar('T', bound=Hashable)
+T = TypeVar('T')
 
 
 def prm(

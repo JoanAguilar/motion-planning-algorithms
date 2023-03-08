@@ -1,11 +1,11 @@
 """Implementation for the RRT algorithm."""
 
 import bisect
-from typing import Callable, Hashable, TypeVar
+from typing import Callable, TypeVar
 
 from motionplanning.graphs import Tree
 
-T = TypeVar('T', bound=Hashable)
+T = TypeVar('T')
 
 
 class MaxIterError(Exception):
