@@ -1,4 +1,4 @@
-"""Implementations of the PRM, sPRM, and k-sPRM algorithms."""
+"""Implementations for the PRM, sPRM, and k-sPRM algorithms."""
 
 import bisect
 from typing import Callable, Hashable, Iterable, Optional, TypeVar
