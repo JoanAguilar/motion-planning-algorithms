@@ -89,13 +89,23 @@ class Graph(Generic[T]):
             end_node: Destination node of the edge.
 
         Raises:
-            NodeError: if there is no connection between ``start_node``
+            NodeError: if either ``start_node`` or ``end_node`` are not
+                in the graph.
+            PathError: if there is no connection between ``start_node``
                 and ``end_node``.
         """
         try:
             del self._edges[start_node][end_node]
         except KeyError:
-            raise NodeError
+            if start_node not in self._edges:
+                raise NodeError(
+                    f"Start node ({start_node}) is not in the graph.")
+            elif end_node not in self._edges:
+                raise NodeError(f"End node ({end_node}) is not in the graph.")
+            else:
+                raise PathError(
+                    f"No connection between the start node ({start_node}) and "
+                    f"the end node ({end_node}) exists.")
 
     def connected(self, n1: T, n2: T) -> bool:
         """
