@@ -20,7 +20,7 @@ def rrt(
         steer: Callable[[T, T], T],
         check_path: Callable[[T, T], bool],
         max_iters: int,
-        return_fast: bool = False
+        return_on_goal: bool = False
         ) -> tuple[Tree[T], T]:
     """
     Run the RRT (Rapidly-exploring Random Trees) algorithm.
@@ -47,10 +47,10 @@ def rrt(
             is feasible (obstacle-free). "True" means the path is
             feasible.
         max_iters: Maximum number of iterations to run the algorithm.
-        return_fast: If set to True, the algorithm returns once a node
-            in the goal region has been found; if set to False, the
-            algorithm runs until the maximum number of iterations is
-            reached.
+        return_on_goal: If set to True, the algorithm returns once a
+            node in the goal region has been found; if set to False,
+            the algorithm runs until the maximum number of iterations
+            is reached.
 
     Returns:
         The generated tree, and the node in the goal region.
@@ -78,7 +78,7 @@ def rrt(
         goal_node = init_node
     else:
         goal_node = None
-    if return_fast and goal_node is not None:
+    if return_on_goal and goal_node is not None:
         return tree, goal_node
 
     for _ in range(max_iters):
@@ -89,7 +89,7 @@ def rrt(
             tree.add_node(new_v, near_v, cost(near_v, new_v))
             if goal(new_v):
                 goal_node = new_v
-            if return_fast and goal_node is not None:
+            if return_on_goal and goal_node is not None:
                 return tree, goal_node
 
     if goal_node is not None:

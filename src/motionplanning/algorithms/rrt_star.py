@@ -22,7 +22,7 @@ def rrt_star(
         d: int,
         steer_cost: float,
         max_iters: int,
-        return_fast: bool = False
+        return_on_goal: bool = False
         ) -> tuple[Tree[T], T]:
     """
     Run the RRT* (RRT-star) algorithm.
@@ -63,10 +63,10 @@ def rrt_star(
             ``steer_cost >= dist(v0, steer(v0, v1))`` for any value of
             ``v0`` and ``v1`` in the free space.
         max_iters: Maximum number of iterations to run the algorithm.
-        return_fast: If set to True, the algorithm returns once a node
-            in the goal region has been found; if set to False, the
-            algorithm runs until the maximum number of iterations is
-            reached.
+        return_on_goal: If set to True, the algorithm returns once a
+            node in the goal region has been found; if set to False,
+            the algorithm runs until the maximum number of iterations
+            is reached.
 
     Returns:
         The generated tree, and the node in the goal region.
@@ -112,7 +112,7 @@ def rrt_star(
         goal_node = init_node
     else:
         goal_node = None
-    if return_fast and goal_node is not None:
+    if return_on_goal and goal_node is not None:
         return tree, goal_node
 
     for _ in range(max_iters):
@@ -145,7 +145,7 @@ def rrt_star(
 
             if goal(new_v):
                 goal_node = new_v
-            if return_fast and goal_node is not None:
+            if return_on_goal and goal_node is not None:
                 return tree, goal_node
 
     if goal_node is not None:
@@ -165,7 +165,7 @@ def krrt_star(
         check_path: Callable[[T, T], bool],
         max_iters: int,
         k_rrt: float = 2 * np.e,
-        return_fast: bool = False
+        return_on_goal: bool = False
         ) -> tuple[Tree[T], T]:
     """
     Run the k-RRT* (k-nearest RRT*) algorithm.
@@ -200,10 +200,10 @@ def krrt_star(
             is computed as ``round(k_rrt * np.log(len(V)))``, where
             ``len(V)`` is the number of nodes in the computed graph at
             the current iteration.
-        return_fast: If set to True, the algorithm returns once a node
-            in the goal region has been found; if set to False, the
-            algorithm runs until the maximum number of iterations is
-            reached.
+        return_on_goal: If set to True, the algorithm returns once a
+            node in the goal region has been found; if set to False,
+            the algorithm runs until the maximum number of iterations
+            is reached.
 
     Returns:
         The generated tree, and the node in the goal region.
@@ -245,7 +245,7 @@ def krrt_star(
         goal_node = init_node
     else:
         goal_node = None
-    if return_fast and goal_node is not None:
+    if return_on_goal and goal_node is not None:
         return tree, goal_node
 
     for _ in range(max_iters):
@@ -276,7 +276,7 @@ def krrt_star(
 
             if goal(new_v):
                 goal_node = new_v
-            if return_fast and goal_node is not None:
+            if return_on_goal and goal_node is not None:
                 return tree, goal_node
 
     if goal_node is not None:
