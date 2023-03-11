@@ -47,7 +47,8 @@ class Tree(Generic[T]):
             NodeError: if ``parent`` is not in the tree.
         """
         if parent not in self._parents:
-            raise NodeError
+            raise NodeError(
+                f"Parent node ({parent}) is not in the tree.")
 
         self._parents[node] = (parent, cost)
 
